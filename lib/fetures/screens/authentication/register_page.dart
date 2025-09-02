@@ -20,6 +20,22 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool _isLoading = false;
   bool _obscurePassword = true;
+  String? _selectedGender;
+  DateTime? _selectedDate;
+  Color _obscureColor = Colors.blueGrey;
+
+  // DateTime
+  Future<void> _pickDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1950),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() => _selectedDate = picked);
+    }
+  }
 
   String _getErrorMessage(String code) {
     switch (code) {
@@ -88,7 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(
         () => _isLoading = false,
       );
-    }finally {
+    } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
@@ -136,8 +152,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 TextFormField(
                   controller: _usernameController,
                   decoration: InputDecoration(
+                    focusColor: Colors.blue,
                     labelText: "Username",
-                    prefixIcon: const Icon(Icons.person),
+                    prefixIcon: const Icon(Icons.person, color: Colors.blue),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -152,7 +169,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: "Email",
-                    prefixIcon: const Icon(Icons.email),
+                    prefixIcon:
+                        const Icon(Icons.email, color: Color(0xD2F44336)),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -175,7 +193,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
                     labelText: "Phone",
-                    prefixIcon: const Icon(Icons.phone),
+                    prefixIcon: const Icon(Icons.phone, color: Colors.green),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -191,7 +209,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     labelText: "Password",
-                    prefixIcon: const Icon(Icons.lock),
+                    prefixIcon: const Icon(Icons.lock, color: Colors.blueGrey),
                     suffixIcon: IconButton(
                       icon: Icon(_obscurePassword
                           ? Icons.visibility_off
@@ -199,9 +217,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       onPressed: () {
                         setState(() {
                           _obscurePassword = !_obscurePassword;
+                          _obscureColor =
+                              _obscurePassword ? Colors.blueGrey : Colors.red;
                         });
                       },
                     ),
+                    suffixIconColor: _obscureColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -216,6 +237,74 @@ class _RegisterPageState extends State<RegisterPage> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 20),
+
+                // Gender
+                DropdownButtonFormField<String>(
+                  value: _selectedGender,
+                  items: [
+                    DropdownMenuItem(
+                      value: 'male',
+                      child: Row(
+                        children: [
+                          Icon(Icons.male, color: Colors.blue),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          const Text('Male'),
+                        ],
+                      ),
+                    ),
+                    DropdownMenuItem(
+                      value: 'female',
+                      child: Row(
+                        children: [
+                          Icon(Icons.female, color: Colors.pink),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          const Text('Female'),
+                        ],
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedGender = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    labelText: "Gender",
+                    prefixIcon:
+                        const Icon(Icons.person_outlined, color: Colors.blue),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 15),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _selectedDate == null
+                            ? 'Select Birthday'
+                            : "Birthday: ${_selectedDate.toString().split(' ')[0]}",
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => _pickDate(context),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 130, 195, 236),
+                          elevation: 5),
+                      child: Text("Select Birthday",
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+
                 const SizedBox(height: 30),
 
                 _isLoading

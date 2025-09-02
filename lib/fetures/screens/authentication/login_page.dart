@@ -16,6 +16,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _isLoading = false;
   bool _obscurePassword = true;
+  Color _obscureColor = Colors.blueGrey;
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
@@ -84,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: "Email",
-                    prefixIcon: const Icon(Icons.email),
+                    prefixIcon: const Icon(Icons.email, color: Color(0xD2F44336)),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -107,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     labelText: "Password",
-                    prefixIcon: const Icon(Icons.lock),
+                    prefixIcon: const Icon(Icons.lock, color: Colors.blueGrey),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
@@ -117,9 +118,12 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         setState(() {
                           _obscurePassword = !_obscurePassword;
+                          _obscureColor =
+                              _obscurePassword ? Colors.blueGrey : Colors.red;
                         });
                       },
                     ),
+                    suffixIconColor: _obscureColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
