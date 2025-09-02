@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mafia_store/core/app_colore.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,6 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  
 
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -47,6 +48,27 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
     }
+
+
+Future <void> _signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return;
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("❌ Login failed with Google $e"), backgroundColor: Colors.red),
+      );
+    }
+}
 
   @override
   void dispose() {
@@ -185,38 +207,43 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 2),
                 Text("Or login with", style: TextStyle(fontSize: 18,color: Colors.indigo),),
                 const SizedBox(height: 15),
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  height: 50,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all( color: Colors.grey, width: 2),
-                    
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        "assets/images/google.png",
-                        height: 30,
-                        width: 30,
-                      ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        "Login with Google",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ],
+                InkWell(
+                  onTap: () {
+                    _signInWithGoogle();
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(10),
+                    height: 50,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all( color: Colors.grey, width: 2),
+                      
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          "assets/images/google.png",
+                          height: 30,
+                          width: 30,
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          "Login with Google",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],
