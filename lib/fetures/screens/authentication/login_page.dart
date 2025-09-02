@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:mafia_store/core/app_colore.dart';
@@ -21,26 +22,31 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true);
+    setState(() => _isLoading = true,);
 
-    // ❌ تم إزالة SharedPreferences
-    // ✅ هنا ممكن تعمل شرط تجريبي بسيط
-    await Future.delayed(const Duration(seconds: 1)); // شكل تحميل
-
-    setState(() => _isLoading = false);
-
-    if (_emailController.text.trim() == "admin" &&
-        _passwordController.text.trim() == "1234") {
-      Navigator.pushReplacementNamed(context, '/HomePage');
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("❌ Username or Password incorrect"),
-          backgroundColor: Colors.red,
-        ),
+    try{
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+         password: _passwordController.text.trim(),
       );
+      setState(() => _isLoading = false,);
+      Navigator.pushReplacementNamed(context, '/home');
+    } on FirebaseAuthException catch (e) {
+      setState(() => _isLoading = false,);
+
+      String message = '';
+      if (e.code == 'user-not-found') {
+      message = "❌ No user found for that email.";
+    } else if (e.code == 'wrong-password') {
+      message = "❌ Wrong password.";
+    } else {
+      message = "❌ ${e.message}";
     }
+       ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
+    );
   }
+    }
 
   @override
   void dispose() {
@@ -175,6 +181,44 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
+
+                const SizedBox(height: 2),
+                Text("Or login with", style: TextStyle(fontSize: 18,color: Colors.indigo),),
+                const SizedBox(height: 15),
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  height: 50,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all( color: Colors.grey, width: 2),
+                    
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "assets/images/google.png",
+                        height: 30,
+                        width: 30,
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        "Login with Google",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),
