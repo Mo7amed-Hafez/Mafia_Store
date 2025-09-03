@@ -37,10 +37,46 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  String _getErrorMessage(String code) {
+
+
+  Future<void> _register() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+    try {
+      final credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: _emailController.text.trim(),
+              password: _passwordController.text.trim());
+      await credential.user?.updateDisplayName(_usernameController.text.trim());
+      
+      if (mounted) {
+        _showDialog('Success', 'Acount created successfully!');
+      }
+Navigator.pushReplacementNamed(context, '/login');
+    } on FirebaseAuthException catch (e) {
+      debugPrint(e.code);
+      if (mounted) {
+        String message = _getErrorMessage(e.code);
+        _showDialog('Error', message);
+        setState(
+          () => _isLoading = false,
+        );
+      }
+      setState(
+        () => _isLoading = false,
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+    String _getErrorMessage(String code) {
     switch (code) {
       case 'email-already-in-use':
         return 'An Account with same email exists.';
+      case  "username-already-in-use":
+        return 'An Account with same username exists.';
       case 'invalid-email':
         return 'Please enter a valid email.';
       case 'weaak-password':
@@ -51,6 +87,8 @@ class _RegisterPageState extends State<RegisterPage> {
         return 'An error occured, please try again.';
     }
   }
+
+  
 
   void _showDialog(String title, String message) {
     Color dialogColor = title == 'Success' ? Colors.green : Colors.red;
@@ -79,34 +117,6 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
     setState(() => _isLoading = false);
-  }
-
-  Future<void> _register() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-    try {
-      final credential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: _emailController.text.trim(),
-              password: _passwordController.text.trim());
-      await credential.user?.updateDisplayName(_usernameController.text.trim());
-      Navigator.pushReplacementNamed(context, '/login');
-    } on FirebaseAuthException catch (e) {
-      debugPrint(e.code);
-      if (mounted) {
-        String message = _getErrorMessage(e.code);
-        _showDialog('Error', message);
-        setState(
-          () => _isLoading = false,
-        );
-      }
-      setState(
-        () => _isLoading = false,
-      );
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
   }
 
   @override
@@ -332,6 +342,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const Text("Already have an account? "),
                     TextButton(
                       onPressed: () {
+
                         Navigator.pushReplacementNamed(context, '/login');
                       },
                       child: const Text(

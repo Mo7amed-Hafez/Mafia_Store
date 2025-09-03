@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mafia_store/fetures/screens/authentication/login_page.dart';
 import 'package:mafia_store/fetures/screens/authentication/register_page.dart';
-import 'package:mafia_store/fetures/screens/home_page.dart';
+import 'package:mafia_store/fetures/screens/home/home_page.dart';
+import 'package:mafia_store/fetures/screens/info/profile_page.dart';
+import 'package:mafia_store/fetures/screens/info/settings_page.dart';
 import 'package:mafia_store/fetures/screens/onboarding_screens.dart';
+import 'package:mafia_store/fetures/screens/productes/cart_page.dart';
+import 'package:mafia_store/fetures/screens/productes/productes_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,12 +21,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Overboard Demo',
       debugShowCheckedModeBanner: false,
-      initialRoute: '/register',
+      initialRoute: '/home',
       routes: {
         '/onboarding': (context) => OnboardingPage(),
         '/home': (context) => HomePage(),
         '/register': (context) => RegisterPage(),
         '/login': (context) => LoginPage(),
+        '/profile': (context) => ProfilePage(),
+        '/settings': (context) => SettingsPage(),
+        '/cart': (context) => CartPage(),
+        '/productes': (context) => ProductesPage(),
       },
     );
   }
