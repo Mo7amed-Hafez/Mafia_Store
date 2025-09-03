@@ -1,7 +1,9 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mafia_store/core/app_colore.dart';
+import 'package:mafia_store/fetures/data/firestore_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -30,6 +32,9 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
          password: _passwordController.text.trim(),
       );
+      await createUserInFirestore(FirebaseAuth.instance.currentUser!);
+      
+
       setState(() => _isLoading = false,);
       Navigator.pushReplacementNamed(context, '/home');
     } on FirebaseAuthException catch (e) {
@@ -62,6 +67,7 @@ Future <void> _signInWithGoogle() async {
         idToken: googleAuth.idToken,
       );
       await FirebaseAuth.instance.signInWithCredential(credential);
+      await createUserInFirestore(FirebaseAuth.instance.currentUser!);
       Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -210,6 +216,7 @@ Future <void> _signInWithGoogle() async {
                 InkWell(
                   onTap: () {
                     _signInWithGoogle();
+
                   },
                   child: Container(
                     margin: const EdgeInsets.all(10),

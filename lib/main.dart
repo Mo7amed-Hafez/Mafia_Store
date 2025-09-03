@@ -21,7 +21,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Overboard Demo',
       debugShowCheckedModeBanner: false,
-      initialRoute: '/home',
+      theme: ThemeData(
+        fontFamily:'Poppins'
+      ),
+      initialRoute: '/login',
       routes: {
         '/onboarding': (context) => OnboardingPage(),
         '/home': (context) => HomePage(),

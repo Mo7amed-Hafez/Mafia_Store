@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:mafia_store/core/app_colore.dart';
+import 'package:mafia_store/fetures/data/firestore_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -49,6 +50,15 @@ class _RegisterPageState extends State<RegisterPage> {
               email: _emailController.text.trim(),
               password: _passwordController.text.trim());
       await credential.user?.updateDisplayName(_usernameController.text.trim());
+
+      // 🟢 هنا تسجل في Firestore
+await createUserInFirestore(
+  credential.user!,
+  username: _usernameController.text.trim(),
+  phone: _phoneController.text.trim(),
+  gender: _selectedGender,
+  birthday: _selectedDate,
+);
       
       if (mounted) {
         _showDialog('Success', 'Acount created successfully!');
