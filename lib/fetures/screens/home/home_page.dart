@@ -1,8 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mafia_store/core/app_assets.dart';
 import 'package:mafia_store/core/app_colore.dart';
+import 'package:mafia_store/fetures/screens/home/home_content.dart';
+import 'package:mafia_store/fetures/screens/info/profile_page.dart';
+import 'package:mafia_store/fetures/screens/productes/cart_page.dart';
+import 'package:mafia_store/fetures/screens/productes/productes_page.dart';
 import 'package:mafia_store/fetures/widgets/home_widget/build_drawer.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,6 +17,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final user = FirebaseAuth.instance.currentUser;
+
+  var _currentIndex = 0;
+  late List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const HomeContent(),
+      const ProductesPage(),
+      const CartPage(),
+      const ProfilePage(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,88 +47,40 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: AppColore.darkColor,
       ),
       drawer: BuildDrawer(user: user),
-      body: Column(
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(bottom: 80),
-                width: double.infinity,
-                height: 140,
-                decoration: BoxDecoration(
-                  color: AppColore.darkColor,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(15),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    // search
-                    Container(
-                      width: MediaQuery.of(context).size.width / 1.4,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        // color: AppColore.darkColor,
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            AppColore.darkColor,
-                            const Color.fromARGB(238, 79, 69, 62),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.search,
-                              color: AppColore.lightColor,
-                            ),
-                          ),
-                          Text(
-                            "Search Products",
-                            style: TextStyle(color: AppColore.lightColor),
-                          ),
-                        ],
-                      ),
-                    ),
-      
-                    // filter
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: AppColore.primaryColor,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        Icons.tune,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-      
-              // image
-              Positioned(
-                bottom: -100,
-                left: MediaQuery.of(context).size.width / 2 - 175,
-                child: Container(
-                    width: 350,
-                    height: 150,
-                    child: Image.asset(AppAssets.onboarding1)),
-              )
-            ],
-          )
+      body: _pages[_currentIndex],
+      bottomNavigationBar: SalomonBottomBar(
+        currentIndex: _currentIndex,
+        onTap: (i) => setState(() => _currentIndex = i),
+        items: [
+          /// Home
+          SalomonBottomBarItem(
+            icon: Icon(Icons.home_outlined),
+            title: Text("Home"),
+            selectedColor: AppColore.primaryColor,
+          ),
+
+          /// Likes
+          SalomonBottomBarItem(
+              icon: Icon(Icons.store_outlined),
+              title: Text("Productes"),
+              selectedColor: const Color.fromARGB(255, 37, 75, 158)),
+
+          /// Search
+          SalomonBottomBarItem(
+            icon: Icon(Icons.shopping_cart_outlined),
+            title: Text("Cart"),
+            selectedColor: Colors.orange,
+          ),
+
+          /// Profile
+          SalomonBottomBarItem(
+            icon: Icon(Icons.person_outline_rounded),
+            title: Text("Profile"),
+            selectedColor: Colors.teal,
+          ),
         ],
       ),
     );
   }
 }
+
