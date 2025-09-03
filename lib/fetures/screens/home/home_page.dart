@@ -25,10 +25,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _pages = [
-      const HomeContent(),
-      const ProductesPage(),
-      const CartPage(),
-      const ProfilePage(),
+       HomeContent(),
+       ProductesPage(),
+       CartPage(),
+       ProfilePage(),
     ];
   }
 

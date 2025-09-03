@@ -1,15 +1,34 @@
+import 'dart:ui';
+
 class AppAssets {
   static const String logo = 'assets/images/mflogo.png';
+
+  // onboarding
   static const String onboarding1 = 'assets/images/welcome.png';
   static const String onboarding2 = 'assets/images/Online_Shoping.png';
   static const String onboarding3 = 'assets/images/productesIcon.png';
   static const String onboarding4 = 'assets/images/cart.png';
+
+  // profile
   static const String profile = 'assets/images/profile1.jpg';
-  static const String pr1 = 'assets/images/pr1.jpg';
-  static const String pr2 = 'assets/images/pr2.jpg';
-  static const String pr3 = 'assets/images/pr3.jpg';
-  static const String pr4 = 'assets/images/pr4.jpg';
-  static const String pr5 = 'assets/images/pr5.jpg';
-  static const String pr6 = 'assets/images/pr6.jpg';
+
+  // Banerrs
+  static const String banner2 = 'assets/images/banr1.png';
+  static const String banner1 = 'assets/images/ban2.png';
+  static const String banner3 = 'assets/images/ban5.jpg';
+  static const String banner4 = 'assets/images/ban6.jpg';
+
+  // productes
+  static const String nikeShoes = 'assets/images/nikeShoes.avif';
+  static const String adidasTShirt2 = 'assets/images/adidasTShirt2.avif';
+  static const String ultraBoost = 'assets/images/ultraBoost.avif';
+  static const String adidasTShirt = 'assets/images/adidasTShirt.jpg';
+  static const String samsungS25 = 'assets/images/samsungS25.avif';
+  static const String fitbitCharge5 = 'assets/images/fitbitCharge5.jpg';
+  static const String airpodsPro = 'assets/images/airpodsPro.avif';
+  static const String pumaSneakers = 'assets/images/airpodsPro.avif';
+  static const String iphone15 = 'assets/images/iphone15.avif';
+
+  static Color? get primaryColor => null;
 
 }

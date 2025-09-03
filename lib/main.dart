@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily:'Poppins'
       ),
-      initialRoute: '/login',
+      initialRoute: '/home',
       routes: {
         '/onboarding': (context) => OnboardingPage(),
         '/home': (context) => HomePage(),
