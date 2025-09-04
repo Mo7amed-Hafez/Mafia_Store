@@ -4,18 +4,38 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mafia_store/core/app_assets.dart';
 import 'package:mafia_store/fetures/screens/productes/producte_info.dart';
 
-class ProductesPage extends StatelessWidget {
+class ProductesPage extends StatefulWidget {
   const ProductesPage({super.key});
+
+  @override
+  State<ProductesPage> createState() => _ProductesPageState();
+}
+
+class _ProductesPageState extends State<ProductesPage> {
+  final Set<String> _favoriteIds = <String>{};
+  ScaffoldMessengerState? _scaffoldMessenger;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _scaffoldMessenger = ScaffoldMessenger.maybeOf(context);
+  }
+
+  void _showSnack(String message) {
+    if (!mounted || _scaffoldMessenger == null) return;
+    _scaffoldMessenger!.showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   // دالة لإضافة للـ cart
   Future<void> _addToCart(Map<String, dynamic> product) async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
-
     await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
         .collection('cart')
-        .doc(product['id']) // نخزن بنفس الـ id بتاع المنتج
+        .doc(product['id'])
         .set({
       'name': product['name'],
       'description': product['description'],
@@ -25,10 +45,9 @@ class ProductesPage extends StatelessWidget {
     });
   }
 
-  //  دالة لإضافة للـ favorites
+  // دالة لإضافة للـ favorites
   Future<void> _addToFavorites(Map<String, dynamic> product) async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
-
     await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
@@ -98,7 +117,7 @@ class ProductesPage extends StatelessWidget {
           return GridView.builder(
             padding: const EdgeInsets.all(10),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // عمودين
+              crossAxisCount: 2,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
               childAspectRatio: 0.65,
@@ -106,14 +125,13 @@ class ProductesPage extends StatelessWidget {
             itemCount: products.length,
             itemBuilder: (context, index) {
               final product = products[index].data() as Map<String, dynamic>;
-
-              // 🟢 لازم نضيف الـ id بتاع document علشان نستخدمه في cart/favorite
               product['id'] = products[index].id;
+              final String productId = products[index].id;
 
               return GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
+                  if (!mounted) return;
+                  Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) =>
                           ProducteInfo(productId: product['id'] as String),
@@ -208,20 +226,34 @@ class ProductesPage extends StatelessWidget {
                                   icon: const Icon(Icons.shopping_cart),
                                   onPressed: () async {
                                     await _addToCart(product);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text("Added to Cart")),
-                                    );
+                                    if (!mounted) return;
+                                    _showSnack("Added to Cart");
                                   },
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.favorite_border),
+                                  icon: Icon(
+                                    _favoriteIds.contains(productId)
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                  ),
+                                  color: _favoriteIds.contains(productId)
+                                      ? Colors.red
+                                      : Colors.grey,
                                   onPressed: () async {
-                                    await _addToFavorites(product);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text("Added to Favorites")),
-                                    );
+                                    final bool willBeFav =
+                                        !_favoriteIds.contains(productId);
+                                    setState(() {
+                                      if (willBeFav) {
+                                        _favoriteIds.add(productId);
+                                      } else {
+                                        _favoriteIds.remove(productId);
+                                      }
+                                    });
+                                    if (willBeFav) {
+                                      await _addToFavorites(product);
+                                      if (!mounted) return;
+                                      _showSnack("Added to Favorites");
+                                    }
                                   },
                                 ),
                               ],

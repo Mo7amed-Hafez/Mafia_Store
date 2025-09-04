@@ -32,7 +32,7 @@ class _ProducteInfoState extends State<ProducteInfo> {
           .get();
       if (!doc.exists) {
         setState(() {
-          _errorMessage = 'المنتج غير موجود';
+          _errorMessage = 'Product not found';
           _isLoading = false;
         });
         return;
@@ -175,7 +175,7 @@ class _ProducteInfoState extends State<ProducteInfo> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    (product['name'] as String?) ?? 'منتج غير محدد',
+                    (product['name'] as String?) ?? 'Product not found',
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -183,7 +183,7 @@ class _ProducteInfoState extends State<ProducteInfo> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    (product['description'] as String?) ?? 'لا يوجد وصف',
+                    (product['description'] as String?) ?? 'No description',
                     style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   const SizedBox(height: 16),
@@ -247,11 +247,11 @@ class _ProducteInfoState extends State<ProducteInfo> {
                       ),
                       ElevatedButton.icon(
                         onPressed: _addToFavorites,
-                        icon: const Icon(Icons.favorite),
-                        label: const Text("Favorite"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                        ),
+                        icon: const Icon(Icons.favorite,color: Colors.red,),
+                        label: const Text("Favorite",style: TextStyle(color: Colors.red),),
+                        // style: ElevatedButton.styleFrom(
+                        //   backgroundColor: Colors.red,
+                        // ),
                       ),
                     ],
                   ),
