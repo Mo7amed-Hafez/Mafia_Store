@@ -27,6 +27,7 @@ class AppAssets {
 
   /// Map عشان نربط imageKey من Firestore بالصورة الصح
   static const Map<String, String> imagesMap = {
+    "defaultProfile":profile,
     "nikeShoes": nikeShoes,
     "adidasTShirt2": adidasTShirt2,
     "ultraBoost": ultraBoost,
