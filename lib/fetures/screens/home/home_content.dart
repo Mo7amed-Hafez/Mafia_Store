@@ -332,7 +332,7 @@ class _HomeContentState extends State<HomeContent> {
                             ),
                           ),
                           child: const Text(
-                            "عرض جميع المنتجات",
+                            "All Products 🛒",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
