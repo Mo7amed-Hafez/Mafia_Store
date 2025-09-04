@@ -35,7 +35,48 @@ class _CartPageState extends State<CartPage> {
     await _cartRef.doc(docId).delete();
   }
 
-  // Checkout intentionally left empty by request.
+  Future<void> _checkout(
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> items,
+      num totalPrice) async {
+    if (items.isEmpty) return;
+    try {
+      final batch = FirebaseFirestore.instance.batch();
+
+      final orderRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(_uid)
+          .collection('orders')
+          .doc();
+      batch.set(orderRef, {
+        'createdAt': FieldValue.serverTimestamp(),
+        'totalPrice': totalPrice,
+        'itemsCount': items.length,
+        'status': 'pending',
+      });
+
+      for (final item in items) {
+        final data = item.data();
+        batch.set(orderRef.collection('items').doc(item.id), data);
+        batch.delete(_cartRef.doc(item.id));
+      }
+
+      await batch.commit();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Order placed successfully')),
+      );
+    } on FirebaseException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Checkout failed: ${e.message}')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Checkout failed: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +96,7 @@ class _CartPageState extends State<CartPage> {
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
-                  'حدث خطأ أثناء تحميل السلة: ${snapshot.error}',
+                  ' Un Error has Ocurred : ${snapshot.error}',
                   style: const TextStyle(color: Colors.red),
                   textAlign: TextAlign.center,
                 ),
@@ -72,7 +113,7 @@ class _CartPageState extends State<CartPage> {
                   Icon(Icons.remove_shopping_cart,
                       size: 56, color: Colors.grey),
                   SizedBox(height: 8),
-                  Text('السلة فارغة', style: TextStyle(color: Colors.grey)),
+                  Text('Your cart is empty', style: TextStyle(color: Colors.grey)),
                 ],
               ),
             );
@@ -99,7 +140,7 @@ class _CartPageState extends State<CartPage> {
                     final String? imageKey = data['imageKey'] as String?;
                     final String? imagePath =
                         imageKey != null ? AppAssets.imagesMap[imageKey] : null;
-                    final String name = (data['name'] as String?) ?? 'منتج';
+                    final String name = (data['name'] as String?) ?? 'product';
                     final num price = (data['price'] ?? 0) as num;
                     final int quantity = (data['quantity'] ?? 1) as int;
 
@@ -211,7 +252,7 @@ class _CartPageState extends State<CartPage> {
                                         icon: const Icon(Icons.delete_outline,
                                             color: Colors.red),
                                         onPressed: () => _removeItem(doc.id),
-                                        tooltip: 'حذف',
+                                        tooltip: 'Remove item',
                                       ),
                                     ],
                                   )
@@ -263,7 +304,7 @@ class _CartPageState extends State<CartPage> {
                     SizedBox(
                       width: 160,
                       child: ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () => _checkout(docs, total),
                         icon: const Icon(Icons.payment),
                         label: const Text('Checkout'),
                         style: ElevatedButton.styleFrom(
