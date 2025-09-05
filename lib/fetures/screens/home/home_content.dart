@@ -6,6 +6,7 @@ import 'package:mafia_store/core/app_colore.dart';
 import 'package:banner_carousel/banner_carousel.dart';
 import 'package:mafia_store/fetures/screens/productes/productes_page.dart';
 import 'package:mafia_store/fetures/screens/productes/producte_info.dart';
+import 'package:mafia_store/fetures/widgets/producte_wid.dart/serch_widget.dart';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
@@ -80,31 +81,39 @@ class _HomeContentState extends State<HomeContent> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       //  search
-                      Container(
-                        width: MediaQuery.of(context).size.width / 1.4,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              AppColore.darkColor,
-                              const Color.fromARGB(238, 79, 69, 62),
+                      InkWell(
+                        onTap: () {
+                              showSearch(
+      context: context,
+      delegate: ProductSearch(),
+    );
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width / 1.4,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppColore.darkColor,
+                                const Color.fromARGB(238, 79, 69, 62),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Row(
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Icon(Icons.search, color: Colors.white),
+                              ),
+                              Text(
+                                "Search Products",
+                                style: TextStyle(color: AppColore.lightColor),
+                              ),
                             ],
                           ),
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Row(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Icon(Icons.search, color: Colors.white),
-                            ),
-                            Text(
-                              "Search Products",
-                              style: TextStyle(color: AppColore.lightColor),
-                            ),
-                          ],
                         ),
                       ),
 
