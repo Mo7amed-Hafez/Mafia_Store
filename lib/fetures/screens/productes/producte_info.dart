@@ -276,7 +276,25 @@ class _ProducteInfoState extends State<ProducteInfo> {
                     ),
                   ),
                   const SizedBox(height: 4),
+                  Text(
+                    "Rating: ${product['rating'] ?? 0} ⭐",
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppColore.oliveGreen,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Price: ${product['price'] ?? 0} EGP",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
 
+                  const SizedBox(height: 16),
 
                   // التحكم في الكمية
                   Row(
