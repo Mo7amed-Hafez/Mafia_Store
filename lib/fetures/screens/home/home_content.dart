@@ -239,7 +239,7 @@ class _HomeContentState extends State<HomeContent> {
                 return Column(
                   children: [
                     GridView.builder(
-                      shrinkWrap: true, // 🟢 مهم عشان يشتغل جوه Scroll
+                      shrinkWrap: true, 
                       physics: const NeverScrollableScrollPhysics(),
                       padding: const EdgeInsets.all(10),
                       gridDelegate:
@@ -316,7 +316,7 @@ class _HomeContentState extends State<HomeContent> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        product['name'] ?? 'منتج غير محدد',
+                                        product['name'] ?? 'Unknown Product',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
@@ -326,7 +326,7 @@ class _HomeContentState extends State<HomeContent> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        product['description'] ?? 'لا يوجد وصف',
+                                        product['description'] ?? 'No description',
                                         style: const TextStyle(
                                           fontSize: 12,
                                           color: Colors.grey,

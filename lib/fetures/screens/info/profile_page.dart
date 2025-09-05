@@ -105,7 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
               }
             }
           } else if (data.containsKey('birthdate')) {
-            // دعم خلفي إذا كان الحقل القديم مستخدماً
+            
             birthdate = (data['birthdate'] as String?) ?? 'Not set';
           }
           final photoUrl = user?.photoURL;

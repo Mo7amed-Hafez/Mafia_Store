@@ -184,7 +184,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       builder: (ctx) => AlertDialog(
                         title: const Text('Contact Us'),
                         content: const Text(
-                            'Email: support@mafiastore.app\nPhone: +20 100 000 0000'),
+                            'Email: support@mafiastore.app\nPhone: +2010 1837 1562'),
                         actions: [
                           TextButton(
                               onPressed: () => Navigator.pop(ctx),

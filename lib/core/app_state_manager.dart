@@ -37,18 +37,18 @@ class _AppStateManagerState extends State<AppStateManager> {
         final hasProfile = await AuthService.hasUserProfile();
 
         if (hasProfile) {
-          // المستخدم له ملف تعريف، انتقل للصفحة الرئيسية
+          // المستخدم مسجل قبل كدا ، انتقل للصفحة الرئيسية
           _initialRoute = '/home';
           // تحديث آخر تسجيل دخول
           await AuthService.updateLastLogin();
         } else {
-          // المستخدم مسجل الدخول لكن لا يوجد ملف تعريف، انتقل لإنشاء الملف
-          _initialRoute = '/login'; // أو صفحة إكمال الملف الشخصي
+          // المستخدم مسجل الدخول لكن طلع فا يسجل تاني
+          _initialRoute = '/login'; 
         }
       } else {
         // المستخدم غير مسجل الدخول
         if (isFirstTime) {
-          // أول مرة يستخدم التطبيق، انتقل للـ onboarding
+          // أول مرة يستخدم التطبيق، انتقل لي onboarding
           _initialRoute = '/onboarding';
         } else {
           // المستخدم شاهد الـ onboarding من قبل، انتقل لتسجيل الدخول

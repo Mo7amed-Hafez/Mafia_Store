@@ -32,7 +32,6 @@ class _OnboardingPageState extends State<OnboardingPage>
         buttonColor: AppColore.primaryColor,
         activeBulletColor: AppColore.primaryColor,
 
-        // backgroundProvider: NetworkImage('https://picsum.photos/720/1280'),
         skipCallback: () async {
           // تعيين أن المستخدم شاهد الـ onboarding
           await AuthService.setOnboardingSeen();
@@ -72,7 +71,7 @@ class _OnboardingPageState extends State<OnboardingPage>
             'Welcome to Mafia Store – your trusted place to explore, shop, and enjoy the best deals all in one place.',
         doAnimateImage: true),
     PageModel(
-        color: const Color(0xFF9df3f7),
+        color: const Color.fromARGB(255, 40, 81, 83),
         imageAssetPath: AppAssets.onboarding2,
         title: 'Online Shopping',
         body:

@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
 
     try {
-      // التحقق من حالة المصادقة
+      // التحقق من حالة تسجيل الدخول
       final user = AuthService.currentUser;
       final isFirstTime = await AuthService.isFirstTimeUser();
 
@@ -47,12 +47,12 @@ class _SplashScreenState extends State<SplashScreen>
         final hasProfile = await AuthService.hasUserProfile();
 
         if (hasProfile) {
-          // المستخدم له ملف تعريف، انتقل للصفحة الرئيسية
+          // المستخدم مسجل، انتقل للصفحة الرئيسية
           if (mounted) {
             Navigator.pushReplacementNamed(context, '/home');
           }
         } else {
-          // المستخدم مسجل الدخول لكن لا يوجد ملف تعريف
+          // المستخدم مسجل الدخول لكن طلع
           if (mounted) {
             Navigator.pushReplacementNamed(context, '/login');
           }

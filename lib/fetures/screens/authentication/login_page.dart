@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _isLoading = false;
   bool _obscurePassword = true;
-  Color _obscureColor = Colors.blueGrey;
+  Color _obscureColor = AppColore.primaryColor;
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
@@ -152,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.shopping_bag, size: 80, color: Colors.blue),
+                const Icon(Icons.shopping_bag, size: 80, color: AppColore.primaryColor),
                 const SizedBox(height: 20),
 
                 const Text(
@@ -160,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                    color: AppColore.primaryColor,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -177,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: InputDecoration(
                     labelText: "Email",
                     prefixIcon:
-                        const Icon(Icons.email, color: Color(0xD2F44336)),
+                        const Icon(Icons.email, color: AppColore.primaryColor),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -200,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     labelText: "Password",
-                    prefixIcon: const Icon(Icons.lock, color: Colors.blueGrey),
+                    prefixIcon: const Icon(Icons.lock, color: AppColore.primaryColor),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
@@ -211,7 +211,7 @@ class _LoginPageState extends State<LoginPage> {
                         setState(() {
                           _obscurePassword = !_obscurePassword;
                           _obscureColor =
-                              _obscurePassword ? Colors.blueGrey : Colors.red;
+                              _obscurePassword ? AppColore.primaryColor : Colors.red;
                         });
                       },
                     ),
@@ -224,7 +224,7 @@ class _LoginPageState extends State<LoginPage> {
                     if (value == null || value.isEmpty) {
                       return "Please enter your password";
                     }
-                    if (value.length < 4) {
+                    if (value.length < 6) {
                       return "Password must be at least 4 characters";
                     }
                     return null;
@@ -238,7 +238,7 @@ class _LoginPageState extends State<LoginPage> {
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
-                          backgroundColor: Colors.blue,
+                          backgroundColor: AppColore.primaryColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -262,7 +262,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       child: const Text(
                         "Register",
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(color: AppColore.primaryColor),
                       ),
                     ),
                   ],
@@ -271,7 +271,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 2),
                 Text(
                   "Or login with",
-                  style: TextStyle(fontSize: 18, color: Colors.indigo),
+                  style: TextStyle(fontSize: 18, color: AppColore.oliveGreen),
                 ),
                 const SizedBox(height: 15),
                 InkWell(

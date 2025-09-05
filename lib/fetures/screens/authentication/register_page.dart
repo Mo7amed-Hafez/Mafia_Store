@@ -23,9 +23,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _obscureConfPassword = true;
   String? _selectedGender;
   DateTime? _selectedDate;
-  Color _obscureColor = Colors.blueGrey;
+  Color _obscureColor = AppColore.primaryColor;
+  Color _obscureColor2 = AppColore.primaryColor;
 
   // DateTime
   Future<void> _pickDate(BuildContext context) async {
@@ -51,7 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
               password: _passwordController.text.trim());
       await credential.user?.updateDisplayName(_usernameController.text.trim());
 
-      // 🟢 هنا تسجل في Firestore
+      //  هنا تسجل في Firestore
       await createUserInFirestore(
         credential.user!,
         username: _usernameController.text.trim(),
@@ -150,7 +152,7 @@ class _RegisterPageState extends State<RegisterPage> {
             key: _formKey,
             child: Column(
               children: [
-                const Icon(Icons.person_add, size: 80, color: Colors.blue),
+                const Icon(Icons.person_add, size: 80, color: AppColore.primaryColor),
                 const SizedBox(height: 20),
 
                 const Text(
@@ -158,7 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                    color: AppColore.primaryColor,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -175,7 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   decoration: InputDecoration(
                     focusColor: Colors.blue,
                     labelText: "Username",
-                    prefixIcon: const Icon(Icons.person, color: Colors.blue),
+                    prefixIcon: const Icon(Icons.person, color: AppColore.primaryColor),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -191,7 +193,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   decoration: InputDecoration(
                     labelText: "Email",
                     prefixIcon:
-                        const Icon(Icons.email, color: Color(0xD2F44336)),
+                        const Icon(Icons.email, color: AppColore.primaryColor),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -214,7 +216,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
                     labelText: "Phone",
-                    prefixIcon: const Icon(Icons.phone, color: Colors.green),
+                    prefixIcon: const Icon(Icons.phone, color:AppColore.primaryColor),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -230,7 +232,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     labelText: "Password",
-                    prefixIcon: const Icon(Icons.lock, color: Colors.blueGrey),
+                    prefixIcon: const Icon(Icons.lock, color:AppColore.primaryColor),
                     suffixIcon: IconButton(
                       icon: Icon(_obscurePassword
                           ? Icons.visibility_off
@@ -239,7 +241,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         setState(() {
                           _obscurePassword = !_obscurePassword;
                           _obscureColor =
-                              _obscurePassword ? Colors.blueGrey : Colors.red;
+                              _obscurePassword ? AppColore.primaryColor : Colors.red;
                         });
                       },
                     ),
@@ -252,7 +254,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     if (value == null || value.isEmpty) {
                       return "Enter password";
                     }
-                    if (value.length < 4) {
+                    if (value.length < 6) {
                       return "Password must be at least 4 characters";
                     }
                     return null;
@@ -263,24 +265,25 @@ class _RegisterPageState extends State<RegisterPage> {
                 // Confirm Password
                 TextFormField(
                   controller: _confirmPasswordController,
-                  obscureText: _obscurePassword,
+                  obscureText: _obscureConfPassword,
                   decoration: InputDecoration(
                     labelText: "Confirm Password",
                     prefixIcon:
-                        const Icon(Icons.lock_outline, color: Colors.blueGrey),
+                        const Icon(Icons.lock_outline, color: AppColore.primaryColor),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword
+                      icon: Icon(_obscureConfPassword
                           ? Icons.visibility_off
                           : Icons.visibility),
                       onPressed: () {
                         setState(() {
-                          _obscurePassword = !_obscurePassword;
-                          _obscureColor =
-                              _obscurePassword ? Colors.blueGrey : Colors.red;
+
+                          _obscureConfPassword = !_obscureConfPassword;
+                          _obscureColor2 =
+                              _obscureConfPassword ? AppColore.primaryColor : Colors.red;
                         });
                       },
                     ),
-                    suffixIconColor: _obscureColor,
+                    suffixIconColor: _obscureColor2,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -334,7 +337,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   decoration: InputDecoration(
                     labelText: "Gender",
                     prefixIcon:
-                        const Icon(Icons.person_outlined, color: Colors.blue),
+                        const Icon(Icons.person_outlined, color: AppColore.primaryColor),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -369,10 +372,10 @@ class _RegisterPageState extends State<RegisterPage> {
                               },
                               style: ElevatedButton.styleFrom(
                                   backgroundColor:
-                                      const Color.fromARGB(255, 130, 195, 236),
+                                      AppColore.secondaryColor,
                                   elevation: 5),
                               child: Text("Select Birthday",
-                                  style: TextStyle(color: Colors.white)),
+                                  style: TextStyle(color: AppColore.darkColor)),
                             ),
                           ],
                         ),
@@ -397,7 +400,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
-                          backgroundColor: Colors.blue,
+                          backgroundColor: AppColore.primaryColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -421,7 +424,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                       child: const Text(
                         "Login",
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(color: AppColore.primaryColor),
                       ),
                     ),
                   ],
