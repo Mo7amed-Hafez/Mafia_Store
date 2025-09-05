@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mafia_store/core/app_assets.dart';
+import 'package:mafia_store/core/app_colore.dart';
 
 class ProducteInfo extends StatefulWidget {
   final String productId;
@@ -26,10 +27,20 @@ class _ProducteInfoState extends State<ProducteInfo> {
 
   Future<void> _loadProduct() async {
     try {
+      // Check if productId is valid
+      if (widget.productId.isEmpty) {
+        setState(() {
+          _errorMessage = 'Invalid product ID';
+          _isLoading = false;
+        });
+        return;
+      }
+
       final doc = await FirebaseFirestore.instance
           .collection('products')
           .doc(widget.productId)
           .get();
+
       if (!doc.exists) {
         setState(() {
           _errorMessage = 'Product not found';
@@ -37,62 +48,101 @@ class _ProducteInfoState extends State<ProducteInfo> {
         });
         return;
       }
-      setState(() {
-        _productDoc = doc;
-        _isLoading = false;
-      });
+
+      if (mounted) {
+        setState(() {
+          _productDoc = doc;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _errorMessage = e.toString();
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Error loading product: ${e.toString()}';
+          _isLoading = false;
+        });
+      }
     }
   }
 
   Future<void> _addToCart() async {
     if (_productDoc == null) return;
-    final product = _productDoc!.data()!;
-    final uid = FirebaseAuth.instance.currentUser!.uid;
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .collection('cart')
-        .doc(widget.productId)
-        .set({
-      'name': product['name'],
-      'description': product['description'],
-      'price': product['price'],
-      'imageKey': product['imageKey'],
-      'quantity': _quantity,
-      'total': (product['price'] ?? 0) * _quantity,
-    });
+    try {
+      final product = _productDoc!.data()!;
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please login first")),
+        );
+        return;
+      }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Added to Cart")),
-    );
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('cart')
+          .doc(widget.productId)
+          .set({
+        'name': product['name'] ?? 'Unknown Product',
+        'description': product['description'] ?? 'No description',
+        'price': product['price'] ?? 0,
+        'imageKey': product['imageKey'] ?? '',
+        'quantity': _quantity,
+        'total': (product['price'] ?? 0) * _quantity,
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Added to Cart")),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: ${e.toString()}")),
+        );
+      }
+    }
   }
 
   Future<void> _addToFavorites() async {
     if (_productDoc == null) return;
-    final product = _productDoc!.data()!;
-    final uid = FirebaseAuth.instance.currentUser!.uid;
 
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(uid)
-        .collection('favorites')
-        .doc(widget.productId)
-        .set({
-      'name': product['name'],
-      'description': product['description'],
-      'price': product['price'],
-      'imageKey': product['imageKey'],
-    });
+    try {
+      final product = _productDoc!.data()!;
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please login first")),
+        );
+        return;
+      }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Added to Favorites")),
-    );
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('favorites')
+          .doc(widget.productId)
+          .set({
+        'name': product['name'] ?? 'Unknown Product',
+        'description': product['description'] ?? 'No description',
+        'price': product['price'] ?? 0,
+        'imageKey': product['imageKey'] ?? '',
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Added to Favorites")),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error: ${e.toString()}")),
+        );
+      }
+    }
   }
 
   @override
@@ -105,11 +155,42 @@ class _ProducteInfoState extends State<ProducteInfo> {
 
     if (_errorMessage != null) {
       return Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          title: const Text('Error'),
+        ),
         body: Center(
-          child: Text(
-            _errorMessage!,
-            style: const TextStyle(color: Colors.red),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: Colors.red,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  _errorMessage!,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _isLoading = true;
+                      _errorMessage = null;
+                    });
+                    _loadProduct();
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -120,38 +201,25 @@ class _ProducteInfoState extends State<ProducteInfo> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text((product['name'] as String?) ?? 'منتج'),
+        title: Text((product['name'] as String?) ?? 'Unknown Product'),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          // صورة المنتج
-          Expanded(
-            flex: 4,
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-              ),
-              child: () {
-                final String? imageKey = product['imageKey'] as String?;
-                final String? imagePath =
-                    imageKey != null ? AppAssets.imagesMap[imageKey] : null;
-                if (imagePath == null) {
-                  return Container(
-                    color: Colors.grey[300],
-                    child: const Icon(
-                      Icons.image_not_supported,
-                      size: 50,
-                      color: Colors.grey,
-                    ),
-                  );
-                }
-                return Image.asset(
-                  imagePath,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  errorBuilder: (context, error, stackTrace) {
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // صورة المنتج
+            Container(
+              height: MediaQuery.of(context).size.height * 0.4,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+                child: () {
+                  final String? imageKey = product['imageKey'] as String?;
+                  final String? imagePath =
+                      imageKey != null ? AppAssets.imagesMap[imageKey] : null;
+                  if (imagePath == null) {
                     return Container(
                       color: Colors.grey[300],
                       child: const Icon(
@@ -160,16 +228,28 @@ class _ProducteInfoState extends State<ProducteInfo> {
                         color: Colors.grey,
                       ),
                     );
-                  },
-                );
-              }(),
+                  }
+                  return Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey[300],
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          size: 50,
+                          color: Colors.grey,
+                        ),
+                      );
+                    },
+                  );
+                }(),
+              ),
             ),
-          ),
 
-          // باقي التفاصيل
-          Expanded(
-            flex: 6,
-            child: Padding(
+            // باقي التفاصيل
+            Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,6 +265,24 @@ class _ProducteInfoState extends State<ProducteInfo> {
                   Text(
                     (product['description'] as String?) ?? 'No description',
                     style: const TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Stock: ${product['stock'] ?? 0}",
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppColore.oliveGreen,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Rating: ${product['rating'] ?? 0} ⭐",
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppColore.oliveGreen,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -247,8 +345,14 @@ class _ProducteInfoState extends State<ProducteInfo> {
                       ),
                       ElevatedButton.icon(
                         onPressed: _addToFavorites,
-                        icon: const Icon(Icons.favorite,color: Colors.red,),
-                        label: const Text("Favorite",style: TextStyle(color: Colors.red),),
+                        icon: const Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                        ),
+                        label: const Text(
+                          "Favorite",
+                          style: TextStyle(color: Colors.red),
+                        ),
                         // style: ElevatedButton.styleFrom(
                         //   backgroundColor: Colors.red,
                         // ),
@@ -258,8 +362,8 @@ class _ProducteInfoState extends State<ProducteInfo> {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

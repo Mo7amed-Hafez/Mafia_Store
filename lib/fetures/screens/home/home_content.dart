@@ -6,7 +6,8 @@ import 'package:mafia_store/core/app_colore.dart';
 import 'package:banner_carousel/banner_carousel.dart';
 import 'package:mafia_store/fetures/screens/productes/productes_page.dart';
 import 'package:mafia_store/fetures/screens/productes/producte_info.dart';
-import 'package:mafia_store/fetures/widgets/producte_wid.dart/serch_widget.dart';
+import 'package:mafia_store/fetures/widgets/home_widget/catogres.dart';
+import 'package:mafia_store/fetures/widgets/producte_wid/serch_widget.dart';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
@@ -83,10 +84,10 @@ class _HomeContentState extends State<HomeContent> {
                       //  search
                       InkWell(
                         onTap: () {
-                              showSearch(
-      context: context,
-      delegate: ProductSearch(),
-    );
+                          showSearch(
+                            context: context,
+                            delegate: ProductSearch(),
+                          );
                         },
                         child: Container(
                           width: MediaQuery.of(context).size.width / 1.4,
@@ -161,10 +162,27 @@ class _HomeContentState extends State<HomeContent> {
                 )
               ],
             ),
+            const SizedBox(height: 80),
 
-            const SizedBox(height: 100), // زيادة المسافة بعد البانر
+            SizedBox(
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  right: 20,
+                ),
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    buildCategory("Electronics", Icons.phone_android),
+                    buildCategory("Fashion", Icons.checkroom),
+                    buildCategory("Sports", Icons.sports_soccer),
+                    buildCategory("Beauty", Icons.brush),
+                  ],
+                ),
+              ),
+            ),
 
-            // 🔥 المنتجات
+            //  المنتجات
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('products')
@@ -374,3 +392,5 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 }
+
+

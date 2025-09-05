@@ -24,6 +24,15 @@ class AppAssets {
   static const String airpodsPro = 'assets/images/airpodsPro.jpg';
   static const String pumaSneakers = 'assets/images/pumaSneakers.jpg';
   static const String iphone15 = 'assets/images/iphone15.jpg';
+  static const String appleWatch9 = 'assets/images/appleWatch9.jpg';
+  static const String galaxyS24 = 'assets/images/galaxyS24.jpg';
+  static const String iphone16Pro = 'assets/images/iphone16Pro.jpg';
+  static const String laptopDell = 'assets/images/laptopDell.jpg';
+  static const String laptopHpGaming = 'assets/images/laptopHpGaming.jpg';
+  static const String lgOledC3 = 'assets/images/lgOledC3.jpg';
+  static const String pcGaming = 'assets/images/pcGaming.jpg';
+  static const String pcOffice = 'assets/images/pcOffice.jpg';
+  static const String sonyXm5 = 'assets/images/sonyXm5.jpg';
 
   /// Map عشان نربط imageKey من Firestore بالصورة الصح
   static const Map<String, String> imagesMap = {
@@ -37,5 +46,14 @@ class AppAssets {
     "airpodsPro": airpodsPro,
     "pumaSneakers": pumaSneakers,
     "iphone15": iphone15,
+    "appleWatch9": appleWatch9,
+    "galaxyS24": galaxyS24,
+    "iphone16Pro": iphone16Pro,
+    "laptopDell": laptopDell,
+    "laptopHpGaming": laptopHpGaming,
+    "lgOledC3": lgOledC3,
+    "pcGaming": pcGaming,
+    "pcOffice": pcOffice,
+    "sonyXm5": sonyXm5
   };
 }

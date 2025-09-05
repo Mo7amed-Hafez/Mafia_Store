@@ -9,6 +9,7 @@ import 'package:mafia_store/fetures/screens/info/settings_page.dart';
 import 'package:mafia_store/fetures/screens/onboarding_screens.dart';
 import 'package:mafia_store/fetures/screens/productes/cart_page.dart';
 import 'package:mafia_store/fetures/screens/productes/productes_page.dart';
+import 'package:mafia_store/fetures/screens/productes/producte_info.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
             '/settings': (context) => SettingsPage(),
             '/cart': (context) => CartPage(),
             '/productes': (context) => ProductesPage(),
+            '/productinfo': (context) => ProducteInfo(productId: ''),
           },
         );
       },
