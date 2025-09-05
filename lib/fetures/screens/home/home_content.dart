@@ -225,7 +225,7 @@ class _HomeContentState extends State<HomeContent> {
                               size: 50, color: Colors.grey),
                           SizedBox(height: 10),
                           Text(
-                            "لا توجد منتجات متاحة حالياً",
+                            "No products found",
                             style: TextStyle(color: Colors.grey, fontSize: 16),
                           ),
                         ],
