@@ -18,6 +18,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -38,8 +40,6 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-
-
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -52,18 +52,17 @@ class _RegisterPageState extends State<RegisterPage> {
       await credential.user?.updateDisplayName(_usernameController.text.trim());
 
       // 🟢 هنا تسجل في Firestore
-await createUserInFirestore(
-  credential.user!,
-  username: _usernameController.text.trim(),
-  phone: _phoneController.text.trim(),
-  gender: _selectedGender,
-  birthday: _selectedDate,
-);
-      
+      await createUserInFirestore(
+        credential.user!,
+        username: _usernameController.text.trim(),
+        phone: _phoneController.text.trim(),
+        gender: _selectedGender,
+        birthday: _selectedDate,
+      );
+
       if (mounted) {
-        _showDialog('Success', 'Acount created successfully!');
+        _showDialog('Success', 'Account created successfully!');
       }
-Navigator.pushReplacementNamed(context, '/login');
     } on FirebaseAuthException catch (e) {
       debugPrint(e.code);
       if (mounted) {
@@ -81,11 +80,11 @@ Navigator.pushReplacementNamed(context, '/login');
     }
   }
 
-    String _getErrorMessage(String code) {
+  String _getErrorMessage(String code) {
     switch (code) {
       case 'email-already-in-use':
         return 'An Account with same email exists.';
-      case  "username-already-in-use":
+      case "username-already-in-use":
         return 'An Account with same username exists.';
       case 'invalid-email':
         return 'Please enter a valid email.';
@@ -97,8 +96,6 @@ Navigator.pushReplacementNamed(context, '/login');
         return 'An error occured, please try again.';
     }
   }
-
-  
 
   void _showDialog(String title, String message) {
     Color dialogColor = title == 'Success' ? Colors.green : Colors.red;
@@ -120,6 +117,9 @@ Navigator.pushReplacementNamed(context, '/login');
           TextButton(
             onPressed: () {
               Navigator.pop(context);
+              if (title == 'Success') {
+                Navigator.pushReplacementNamed(context, '/login');
+              }
             },
             child: Text("OK"),
           ),
@@ -135,6 +135,7 @@ Navigator.pushReplacementNamed(context, '/login');
     _emailController.dispose();
     _phoneController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -259,6 +260,43 @@ Navigator.pushReplacementNamed(context, '/login');
                 ),
                 const SizedBox(height: 20),
 
+                // Confirm Password
+                TextFormField(
+                  controller: _confirmPasswordController,
+                  obscureText: _obscurePassword,
+                  decoration: InputDecoration(
+                    labelText: "Confirm Password",
+                    prefixIcon:
+                        const Icon(Icons.lock_outline, color: Colors.blueGrey),
+                    suffixIcon: IconButton(
+                      icon: Icon(_obscurePassword
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                          _obscureColor =
+                              _obscurePassword ? Colors.blueGrey : Colors.red;
+                        });
+                      },
+                    ),
+                    suffixIconColor: _obscureColor,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Confirm your password";
+                    }
+                    if (value != _passwordController.text) {
+                      return "Passwords do not match";
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+
                 // Gender
                 DropdownButtonFormField<String>(
                   value: _selectedGender,
@@ -304,25 +342,52 @@ Navigator.pushReplacementNamed(context, '/login');
                 ),
 
                 SizedBox(height: 15),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        _selectedDate == null
-                            ? 'Select Birthday'
-                            : "Birthday: ${_selectedDate.toString().split(' ')[0]}",
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => _pickDate(context),
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 130, 195, 236),
-                          elevation: 5),
-                      child: Text("Select Birthday",
-                          style: TextStyle(color: Colors.white)),
-                    ),
-                  ],
+                FormField<DateTime>(
+                  validator: (_) {
+                    if (_selectedDate == null) {
+                      return 'Please select your birthday';
+                    }
+                    return null;
+                  },
+                  builder: (state) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                _selectedDate == null
+                                    ? 'Select Birthday'
+                                    : "Birthday: ${_selectedDate.toString().split(' ')[0]}",
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                await _pickDate(context);
+                                state.validate();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 130, 195, 236),
+                                  elevation: 5),
+                              child: Text("Select Birthday",
+                                  style: TextStyle(color: Colors.white)),
+                            ),
+                          ],
+                        ),
+                        if (state.hasError)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Text(
+                              state.errorText!,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
 
                 const SizedBox(height: 30),
@@ -352,7 +417,6 @@ Navigator.pushReplacementNamed(context, '/login');
                     const Text("Already have an account? "),
                     TextButton(
                       onPressed: () {
-
                         Navigator.pushReplacementNamed(context, '/login');
                       },
                       child: const Text(

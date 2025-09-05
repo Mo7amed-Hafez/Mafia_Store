@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mafia_store/core/app_assets.dart';
 import 'package:mafia_store/core/app_colore.dart';
+import 'package:mafia_store/core/auth_service.dart';
 import 'package:mafia_store/fetures/widgets/profile_widget/profile_info.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -25,6 +26,38 @@ class _ProfilePageState extends State<ProfilePage> {
         title: const Text('My Profile',
             style: TextStyle(color: AppColore.lightColor)),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: AppColore.primaryColor),
+            onPressed: () async {
+              // عرض تأكيد تسجيل الخروج
+              final shouldLogout = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Logout'),
+                  content: const Text('Are you sure you want to logout?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text("Logout"),
+                    ),
+                  ],
+                ),
+              );
+
+              if (shouldLogout == true) {
+                await AuthService.signOut();
+                if (mounted) {
+                  Navigator.pushReplacementNamed(context, '/login');
+                }
+              }
+            },
+          ),
+        ],
       ),
       body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance
@@ -55,7 +88,26 @@ class _ProfilePageState extends State<ProfilePage> {
           final email = user?.email ?? (data['email'] as String?) ?? '';
           final phone = (data['phone'] as String?) ?? 'No phone';
           final gender = (data['gender'] as String?) ?? 'Not set';
-          final birthdate = (data['birthdate'] as String?) ?? 'Not set';
+          // نقرأ حقل birthday إذا كان موجوداً وإلا نبقي 'Not set'
+          String birthdate = 'Not set';
+          if (data.containsKey('birthday')) {
+            final String raw = (data['birthday'] as String?) ?? '';
+            if (raw.isNotEmpty) {
+              try {
+                final dt = DateTime.tryParse(raw);
+                if (dt != null) {
+                  birthdate = dt.toString().split(' ')[0];
+                } else {
+                  birthdate = raw; // fallback كما هو
+                }
+              } catch (_) {
+                birthdate = raw;
+              }
+            }
+          } else if (data.containsKey('birthdate')) {
+            // دعم خلفي إذا كان الحقل القديم مستخدماً
+            birthdate = (data['birthdate'] as String?) ?? 'Not set';
+          }
           final photoUrl = user?.photoURL;
 
           return SingleChildScrollView(

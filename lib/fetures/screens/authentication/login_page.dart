@@ -1,9 +1,8 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mafia_store/core/app_colore.dart';
-import 'package:mafia_store/fetures/data/firestore_service.dart';
+import 'package:mafia_store/core/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,7 +15,6 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  
 
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -25,56 +23,115 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true,);
+    setState(
+      () => _isLoading = true,
+    );
 
-    try{
+    try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
-         password: _passwordController.text.trim(),
+        password: _passwordController.text.trim(),
       );
-      await createUserInFirestore(FirebaseAuth.instance.currentUser!);
-      
 
-      setState(() => _isLoading = false,);
-      Navigator.pushReplacementNamed(context, '/home');
+      try {
+        final hasProfile = await AuthService.hasUserProfile();
+        if (!hasProfile) {
+          await AuthService.createUserProfile();
+        } else {
+          await AuthService.updateLastLogin();
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("⚠️ Failed to sync profile: $e"),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      }
+
+      setState(() => _isLoading = false);
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
     } on FirebaseAuthException catch (e) {
-      setState(() => _isLoading = false,);
+      setState(
+        () => _isLoading = false,
+      );
 
-      String message = '';
-      if (e.code == 'user-not-found') {
-      message = "❌ No user found for that email.";
-    } else if (e.code == 'wrong-password') {
-      message = "❌ Wrong password.";
-    } else {
-      message = "❌ ${e.message}";
+      String message;
+      switch (e.code) {
+        case 'user-not-found':
+          message = "❌ No user found for that email.";
+          break;
+        case 'wrong-password':
+          message = "❌ Wrong password.";
+          break;
+        case 'invalid-credential':
+          message = "❌ Invalid email or password.";
+          break;
+        case 'invalid-email':
+          message = "❌ Invalid email format.";
+          break;
+        case 'user-disabled':
+          message = "❌ This user has been disabled.";
+          break;
+        case 'too-many-requests':
+          message = "❌ Too many attempts. Try again later.";
+          break;
+        default:
+          message = "❌ ${e.message}";
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
+      );
     }
-       ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
-    );
   }
-    }
 
-
-Future <void> _signInWithGoogle() async {
+  Future<void> _signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return;
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
       await FirebaseAuth.instance.signInWithCredential(credential);
-      await createUserInFirestore(FirebaseAuth.instance.currentUser!);
-      Navigator.pushReplacementNamed(context, '/home');
+
+      try {
+        final hasProfile = await AuthService.hasUserProfile();
+        if (!hasProfile) {
+          await AuthService.createUserProfile();
+        } else {
+          await AuthService.updateLastLogin();
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("⚠️ Failed to sync profile: $e"),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      }
+
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("❌ Login failed with Google $e"), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text("❌ Login failed with Google $e"),
+            backgroundColor: Colors.red),
       );
     }
-}
+  }
 
   @override
   void dispose() {
@@ -119,12 +176,13 @@ Future <void> _signInWithGoogle() async {
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: "Email",
-                    prefixIcon: const Icon(Icons.email, color: Color(0xD2F44336)),
+                    prefixIcon:
+                        const Icon(Icons.email, color: Color(0xD2F44336)),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                    validator: (value) {
+                  validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Enter email";
                     }
@@ -211,12 +269,14 @@ Future <void> _signInWithGoogle() async {
                 ),
 
                 const SizedBox(height: 2),
-                Text("Or login with", style: TextStyle(fontSize: 18,color: Colors.indigo),),
+                Text(
+                  "Or login with",
+                  style: TextStyle(fontSize: 18, color: Colors.indigo),
+                ),
                 const SizedBox(height: 15),
                 InkWell(
                   onTap: () {
                     _signInWithGoogle();
-
                   },
                   child: Container(
                     margin: const EdgeInsets.all(10),
@@ -225,8 +285,7 @@ Future <void> _signInWithGoogle() async {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all( color: Colors.grey, width: 2),
-                      
+                      border: Border.all(color: Colors.grey, width: 2),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.5),

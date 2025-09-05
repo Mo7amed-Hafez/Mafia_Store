@@ -1,5 +1,8 @@
 class AppAssets {
   static const String logo = 'assets/images/mfLogo.png';
+  static const String splash1 = 'assets/images/log1.png';
+  static const String splash2 = 'assets/images/log2.png';
+
   static const String onboarding1 = 'assets/images/welcome.png';
   static const String onboarding2 = 'assets/images/Online_Shoping.png';
   static const String onboarding3 = 'assets/images/productesIcon.png';

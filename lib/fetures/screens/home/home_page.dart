@@ -25,10 +25,10 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _pages = [
-       HomeContent(),
-       ProductesPage(),
-       CartPage(),
-       ProfilePage(),
+      HomeContent(),
+      ProductesPage(),
+      CartPage(),
+      ProfilePage(),
     ];
   }
 
@@ -45,6 +45,7 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(fontSize: 18, color: AppColore.primaryColor),
         ),
         backgroundColor: AppColore.darkColor,
+
       ),
       drawer: BuildDrawer(user: user),
       body: _pages[_currentIndex],
