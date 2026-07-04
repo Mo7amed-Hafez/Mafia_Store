@@ -50,7 +50,9 @@ The project follows a **layered architecture** with a clear separation between t
 
 ## 📥 APK
 
->
+>## 📥 APK
+
+👉 [Download Latest APK](https://github.com/Mo7amed-Hafez/Mafia_Store/releases/latest)
 
 ---
 
