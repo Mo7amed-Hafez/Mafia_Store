@@ -42,33 +42,15 @@ The project follows a **layered architecture** with a clear separation between t
 
 ---
 
-## 🎥 Demo
 
-> Add your demo video link here.
-
----
 
 ## 📥 APK
 
->## 📥 APK
-
+>
 👉 [Download Latest APK](https://github.com/Mo7amed-Hafez/Mafia_Store/releases/latest)
 
 ---
 
-## 🚀 Getting Started
-
-```bash
-git clone https://github.com/your-username/mafia-store.git
-
-cd mafia-store
-
-flutter pub get
-
-flutter run
-```
-
----
 
 ## 👨‍💻 Author
 
