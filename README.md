@@ -1,16 +1,78 @@
-# mafia_store
+# 🛒 Mafia Store
 
-A new Flutter project.
+A modern **E-Commerce mobile application** built with **Flutter** and powered by **Firebase**, designed to deliver a fast, smooth, and intuitive shopping experience.
 
-## Getting Started
+The application allows users to browse products, search items, manage their shopping cart, authenticate securely, and place orders through a clean and responsive interface.
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## ✨ Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+* 🔐 Secure Authentication (Email & Google Sign-In)
+* 🛍️ Browse Products
+* 🔎 Product Search
+* ❤️ Wishlist (Favorites)
+* 🛒 Shopping Cart
+* 📦 Checkout & Orders
+* 🌙 Light & Dark Theme
+* 🚀 First-Time User Onboarding
+* 🔥 Real-time Data with Firebase Firestore
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## 🛠️ Tech Stack
+
+* **Flutter**
+* **Dart**
+* **Firebase Authentication**
+* **Cloud Firestore**
+* **Shared Preferences**
+
+---
+
+## 📂 Architecture
+
+The project follows a **layered architecture** with a clear separation between the presentation, data, and service layers. Business logic is organized using the **Repository Pattern**, while UI state is managed with Flutter's built-in `setState`, `StreamBuilder`, and `ValueListenableBuilder` without relying on external state management libraries.
+
+---
+
+## 📱 Screenshots
+
+> Add your application screenshots here.
+
+---
+
+## 🎥 Demo
+
+> Add your demo video link here.
+
+---
+
+## 📥 APK
+
+>
+
+---
+
+## 🚀 Getting Started
+
+```bash
+git clone https://github.com/your-username/mafia-store.git
+
+cd mafia-store
+
+flutter pub get
+
+flutter run
+```
+
+---
+
+## 👨‍💻 Author
+
+**Mohamed Hafez Afia **
+**MAFIA**
+
+Flutter Developer
+
+If you found this project useful, consider giving it a ⭐ on GitHub.
