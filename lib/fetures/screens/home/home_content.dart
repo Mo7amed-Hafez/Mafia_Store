@@ -5,7 +5,7 @@ import 'package:mafia_store/core/app_assets.dart';
 import 'package:mafia_store/core/app_colore.dart';
 import 'package:banner_carousel/banner_carousel.dart';
 import 'package:mafia_store/fetures/screens/productes/productes_page.dart';
-import 'package:mafia_store/fetures/screens/productes/producte_info.dart';
+import 'package:mafia_store/product_info_page.dart'; // Use the repository-based ProductInfoPage
 import 'package:mafia_store/fetures/widgets/home_widget/catogres.dart';
 import 'package:mafia_store/fetures/widgets/producte_wid/serch_widget.dart';
 
@@ -239,7 +239,7 @@ class _HomeContentState extends State<HomeContent> {
                 return Column(
                   children: [
                     GridView.builder(
-                      shrinkWrap: true, 
+                      shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       padding: const EdgeInsets.all(10),
                       gridDelegate:
@@ -265,7 +265,7 @@ class _HomeContentState extends State<HomeContent> {
                               context,
                               MaterialPageRoute(
                                 builder: (_) =>
-                                    ProducteInfo(productId: productId),
+                                    ProductInfoPage(productId: productId),
                               ),
                             );
                           },
@@ -326,7 +326,8 @@ class _HomeContentState extends State<HomeContent> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        product['description'] ?? 'No description',
+                                        product['description'] ??
+                                            'No description',
                                         style: const TextStyle(
                                           fontSize: 12,
                                           color: Colors.grey,
@@ -392,5 +393,3 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 }
-
-

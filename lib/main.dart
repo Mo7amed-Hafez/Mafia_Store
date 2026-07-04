@@ -6,10 +6,10 @@ import 'package:mafia_store/fetures/screens/authentication/register_page.dart';
 import 'package:mafia_store/fetures/screens/home/home_page.dart';
 import 'package:mafia_store/fetures/screens/info/profile_page.dart';
 import 'package:mafia_store/fetures/screens/info/settings_page.dart';
+import 'package:mafia_store/fetures/screens/productes/productes_page.dart';
 import 'package:mafia_store/fetures/screens/splach/onboarding_screens.dart';
 import 'package:mafia_store/fetures/screens/productes/cart_page.dart';
-import 'package:mafia_store/fetures/screens/productes/productes_page.dart';
-import 'package:mafia_store/fetures/screens/productes/producte_info.dart';
+import 'package:mafia_store/product_info_page.dart'; // Use the repository-based ProductInfoPage
 import 'package:mafia_store/fetures/screens/splach/splach_page.dart';
 
 Future<void> main() async {
@@ -55,8 +55,9 @@ class MyApp extends StatelessWidget {
             '/profile': (context) => const ProfilePage(),
             '/settings': (context) => const SettingsPage(),
             '/cart': (context) => const CartPage(),
-            '/productes': (context) => const ProductesPage(),
-            '/productinfo': (context) => const ProducteInfo(productId: ''),
+            '/productes': (context) => const ProductesPage(), // Assuming this lists products
+            '/productinfo': (context) => const ProductInfoPage(
+                productId: ''), // Use the correct ProductInfoPage
           },
         );
       },
