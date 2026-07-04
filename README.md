@@ -38,7 +38,7 @@ The project follows a **layered architecture** with a clear separation between t
 
 ## 📱 Screenshots
 
-> Add your application screenshots here.
+![](https://github.com/Mo7amed-Hafez/Mafia_Store/blob/main/assets/sccreens/MAFIA%20STORE.png)
 
 ---
 
